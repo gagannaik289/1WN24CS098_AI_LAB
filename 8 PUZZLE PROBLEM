@@ -1,0 +1,100 @@
+print("1WN24CS098")
+
+# 8 Puzzle using DFS - Matrix Form
+
+goal = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 0]
+]
+
+# Find position of blank (0)
+def find_blank(state):
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] == 0:
+                return i, j
+
+
+# Print puzzle
+def print_state(state):
+    for row in state:
+        print(row)
+    print()
+
+
+# DFS
+def dfs(start):
+
+    stack = [(start, [start])]
+    visited = set()
+
+    while stack:
+
+        state, path = stack.pop()
+
+        # Convert matrix to tuple so it can be stored in set
+        key = tuple(map(tuple, state))
+
+        if key in visited:
+            continue
+
+        visited.add(key)
+
+        # Check goal
+        if state == goal:
+            return path
+
+        # Find blank
+        x, y = find_blank(state)
+
+        # Up, Down, Left, Right
+        directions = [
+            (-1, 0),
+            (1, 0),
+            (0, -1),
+            (0, 1)
+        ]
+
+        for dx, dy in directions:
+
+            nx = x + dx
+            ny = y + dy
+
+            if 0 <= nx < 3 and 0 <= ny < 3:
+
+                # Copy matrix
+                new_state = [row[:] for row in state]
+
+                # Swap blank with tile
+                new_state[x][y], new_state[nx][ny] = \
+                    new_state[nx][ny], new_state[x][y]
+
+                new_key = tuple(map(tuple, new_state))
+
+                if new_key not in visited:
+                    stack.append(
+                        (new_state, path + [new_state])
+                    )
+
+    return None
+
+
+# Input
+start = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 0, 8]
+]
+
+solution = dfs(start)
+
+if solution:
+
+    print("Solution:\n")
+
+    for state in solution:
+        print_state(state)
+
+else:
+    print("No solution found")
