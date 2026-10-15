@@ -1,0 +1,66 @@
+print("1WN24CS098")
+import random
+
+def create_board():
+    board = [[0 for j in range(4)] for i in range(4)]
+
+    for col in range(4):
+        row = random.randint(0, 3)
+        board[row][col] = 1
+
+    return board
+
+def cost(board):
+    conflicts = 0
+
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] == 1:
+                for k in range(j + 1, 4):
+                    for r in range(4):
+                        if board[r][k] == 1:
+                            if abs(i - r) == abs(j - k):
+                                conflicts += 1
+
+    return conflicts
+
+def hill_climbing():
+    while True:
+        board = create_board()
+
+        while True:
+            current_cost = cost(board)
+
+            if current_cost == 0:
+                print("Solution found:")
+                display(board)
+                return
+
+            best_board = None
+            best_cost = current_cost
+
+            for col in range(4):
+                for row in range(4):
+                    if board[row][col] == 0:
+                        new_board = [r[:] for r in board]
+
+                        for i in range(4):
+                            new_board[i][col] = 0
+
+                        new_board[row][col] = 1
+                        new_cost = cost(new_board)
+
+                        if new_cost < best_cost:
+                            best_cost = new_cost
+                            best_board = new_board
+
+            if best_board is None:
+                break
+
+            board = best_board
+
+def display(board):
+    for row in board:
+        print(row)
+
+hill_climbing()
