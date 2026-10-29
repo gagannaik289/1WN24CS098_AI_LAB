@@ -1,0 +1,54 @@
+
+def tt_entails(KB, query, symbols):
+    print("P\tQ\tKB\tQuery")
+    print("-" * 35)
+
+    return tt_check_all(KB, query, symbols, {})
+
+
+def tt_check_all(KB, query, symbols, model):
+    if not symbols:
+        kb_value = KB(model)
+        query_value = query(model)
+
+        print(
+            model["P"], "\t",
+            model["Q"], "\t",
+            kb_value, "\t",
+            query_value
+        )
+
+        if kb_value:
+            return query_value
+        return True
+
+    P = symbols[0]
+    rest = symbols[1:]
+
+    model_true = model.copy()
+    model_true[P] = True
+
+    model_false = model.copy()
+    model_false[P] = False
+
+    return (
+        tt_check_all(KB, query, rest, model_true)
+        and
+        tt_check_all(KB, query, rest, model_false)
+    )
+
+
+def KB(model):
+    P = model["P"]
+    Q = model["Q"]
+    return ((not P) or Q) and P
+
+
+def query(model):
+    return model["Q"]
+
+
+if tt_entails(KB, query, ["P", "Q"]):
+    print("\nKB entails Query (KB |= Q)")
+else:
+    print("\nKB does not entail Query (KB !|= Q)")
